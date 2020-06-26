@@ -2,6 +2,7 @@
 # (adrianaps@email.arizona) on June 26, 2020.
 library(tidyverse)
 library(boot)
+set.seed(42)
 
 # load data
 italian_multiword_data <- read_tsv("data/iris_spina_siyanova.txt")
@@ -47,6 +48,18 @@ results$t0
 results$t
 plot(results,
      index = 3)
+
+# get means from bootstrapping results
+all_means <- data.frame(results$t)
+colnames(all_means) <- c("A1", "A2", "B1")
+
+all_means <- all_means %>%
+  pivot_longer(cols = c("A1", "A2", "B1"),
+               names_to = "CEFR")
+
+all_means %>%
+  group_by(CEFR) %>%
+  summarise(mean = mean(value))
 
 # get 95% confidence interval
 a1_results <- boot.ci(results,
